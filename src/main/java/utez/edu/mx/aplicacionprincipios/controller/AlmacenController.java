@@ -1,12 +1,13 @@
 package utez.edu.mx.aplicacionprincipios.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.aplicacionprincipios.model.Almacen;
 import utez.edu.mx.aplicacionprincipios.service.AlmacenService;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/almacenes")
@@ -21,28 +22,40 @@ public class AlmacenController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Almacen> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         Almacen almacen = service.obtenerPorId(id);
         if (almacen != null) {
             return ResponseEntity.ok(almacen);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Almacén no encontrado"));
         }
     }
 
     @PostMapping
-    public ResponseEntity<Almacen> guardar(@RequestBody Almacen a) {
-        return new ResponseEntity<>(service.guardar(a), HttpStatus.CREATED);
+    public ResponseEntity<?> guardar(@Valid @RequestBody Almacen a) {
+        Almacen guardado = service.guardar(a);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "mensaje", "Almacén registrado exitosamente",
+                "almacen", guardado
+        ));
     }
 
     @PutMapping("/{id}")
-    public Almacen actualizar(@PathVariable Long id, @RequestBody Almacen a) {
-        return service.actualizar(id, a);
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Almacen a) {
+        Almacen actualizado = service.actualizar(id, a);
+        if (actualizado != null) {
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "Almacén actualizado correctamente",
+                    "almacen", actualizado
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Almacén no encontrado"));
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         service.eliminar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("mensaje", "Almacén eliminado con éxito"));
     }
 }

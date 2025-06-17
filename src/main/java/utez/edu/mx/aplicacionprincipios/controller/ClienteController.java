@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import utez.edu.mx.aplicacionprincipios.model.Cliente;
 import utez.edu.mx.aplicacionprincipios.service.ClienteService;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -22,28 +22,40 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         Cliente cliente = service.obtenerPorId(id);
         if (cliente != null) {
             return ResponseEntity.ok(cliente);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Cliente no encontrado"));
         }
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> guardar(@Valid @RequestBody Cliente cliente) {
-        return new ResponseEntity<>(service.guardar(cliente), HttpStatus.CREATED);
+    public ResponseEntity<?> guardar(@Valid @RequestBody Cliente cliente) {
+        Cliente guardado = service.guardar(cliente);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "mensaje", "Cliente creado exitosamente",
+                "cliente", guardado
+        ));
     }
 
     @PutMapping("/{id}")
-    public Cliente actualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
-        return service.actualizar(id, cliente);
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
+        Cliente actualizado = service.actualizar(id, cliente);
+        if (actualizado != null) {
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "Cliente actualizado correctamente",
+                    "cliente", actualizado
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Cliente no encontrado"));
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         service.eliminar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("mensaje", "Cliente eliminado con éxito"));
     }
 }
