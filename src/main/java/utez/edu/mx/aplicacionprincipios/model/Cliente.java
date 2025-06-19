@@ -12,7 +12,7 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idCliente;
 
     @NotBlank(message = "El nombre completo es obligatorio")
     private String nombreCompleto;

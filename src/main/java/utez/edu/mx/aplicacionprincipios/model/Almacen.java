@@ -36,6 +36,10 @@ public class Almacen {
     @NotNull(message = "La cede es obligatoria")
     private Cede cede;
 
+    @ManyToOne
+    @JoinColumn(name = "idCliente") // Opcionalmente puedes nombrar la columna
+    private Cliente cliente;
+
     @PrePersist
     public void generarClave() {
         this.fechaRegistro = LocalDate.now();

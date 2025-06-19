@@ -2,6 +2,7 @@ package utez.edu.mx.aplicacionprincipios.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +25,6 @@ public class Cede {
 
     @NotBlank(message = "El municipio es obligatorio")
     private String municipio;
-
 
     @PrePersist
     public void generarClave() {

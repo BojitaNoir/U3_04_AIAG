@@ -53,6 +53,20 @@ public class AlmacenController {
         }
     }
 
+    @PutMapping("/{id}/asignar-cliente/{idCliente}")
+    public ResponseEntity<?> asignarCliente(@PathVariable Long id, @PathVariable Long idCliente) {
+        Almacen actualizado = service.asignarCliente(id, idCliente);
+        if (actualizado != null) {
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "Cliente asignado correctamente al almacén",
+                    "almacen", actualizado
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Almacén o Cliente no encontrado"));
+        }
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         service.eliminar(id);
